@@ -1,12 +1,17 @@
 {
-  "name": "calcinai/rubberneck",
+  "name": "devgiants/filesystem-gpio",
   "description": "Utility to monitor file system changes",
   "type": "Library",
+  "keywords": ["php", "filesystem", "monitor"],
   "license": "MIT",
   "authors": [
     {
       "name": "Michael Calcinai",
       "email": "michael@calcin.ai"
+    },
+    {
+      "name": "Nicolas BONNIOT",
+      "email": "nicolas@devgiants.fr"
     }
   ],
   "require": {
