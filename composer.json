@@ -1,5 +1,5 @@
 {
-  "name": "devgiants/filesystem-gpio",
+  "name": "devgiants/filesystem-notifications",
   "description": "Utility to monitor file system changes",
   "type": "Library",
   "keywords": ["php", "filesystem", "monitor"],
