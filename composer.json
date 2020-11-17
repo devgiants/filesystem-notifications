@@ -15,9 +15,10 @@
     }
   ],
   "require": {
-    "react/event-loop": "^0.5.2",
+    "react/event-loop": "^1.1.1",
     "evenement/evenement": "^2.0",
-    "monolog/monolog": "^1.25"
+    "monolog/monolog": "^1.25",
+    "symfony/dotenv": "^3.4"
   },
   "suggest": {
     "ext-inotify": "*"
