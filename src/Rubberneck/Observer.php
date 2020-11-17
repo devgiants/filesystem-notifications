@@ -21,7 +21,7 @@ class Observer {
     const EVENT_DELETE = 'delete';
 
     /**
-     * @var \React\EventLoop\LibEvLoop|LoopInterface
+     * @var LoopInterface
      */
     private $loop;
 
