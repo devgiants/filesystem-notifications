@@ -25,7 +25,8 @@ RUN apt-get update && apt-get install -y \
     g++\
     net-tools \
     procps \
-    htop
+    htop \
+    inotify-tools
 
 #    software-properties-common
 

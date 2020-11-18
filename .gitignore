@@ -1,7 +1,7 @@
-composer.lock
 coverage
 /vendor/
 .idea/
 .env.local
 /.composer/
 /.composer_cache/
+/.phpunit.result.cache
