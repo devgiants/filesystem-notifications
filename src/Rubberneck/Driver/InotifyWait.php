@@ -42,33 +42,33 @@ class InotifyWait extends AbstractDriver implements DriverInterface
         $eventLines = fread($stream, 1024);
 
         // Can have multiple events per read (or not enough)
-        foreach (explode("\n", $eventLines) as $event_line) {
-            list($file, $events) = sscanf($event_line, '%s %s');
+        foreach (explode("\n", $eventLines) as $eventLine) {
+            list($directory, $events, $file) = sscanf($eventLine, '%s %s %s');
             $events = explode(',', $events);
 
-            $this->logger->addDebug("Data incoming on {$file}", $events);
+            if (!empty($file)) {
+                $this->logger->addDebug("Data incoming on {$directory}{$file}", $events);
+                foreach ($events as $event) {
 
-            foreach ($events as $event) {
+                    //If we don't know about that event, continue
+                    if (!isset(static::$EVENT_MAP[$event])) {
+                        $this->logger->addDebug("{$event} is unkown. Abort");
+                        continue;
+                    }
 
-                //If we don't know about that event, continue
-                if (! isset(static::$EVENT_MAP[$event])) {
-                    $this->logger->addDebug("{$event} is unkown. Abort");
-                    continue;
+                    $eventName = static::$EVENT_MAP[$event];
+
+                    //If not subscribed, continue
+                    if (!in_array($eventName, $this->observer->getSubscribedEvents())) {
+                        $this->logger->addDebug("{$event} is unfollowed. Abort");
+                        continue;
+                    }
+
+                    //Otherwise, good to fire
+                    $this->logger->addDebug("Emit {$eventName} for {$file}");
+                    $this->observer->emit($eventName, [$file]);
                 }
-
-                $eventName = static::$EVENT_MAP[$event];
-
-                //If not subscribed, continue
-                if (! in_array($eventName, $this->observer->getSubscribedEvents())) {
-                    $this->logger->addDebug("{$event} is unfollowed. Abort");
-                    continue;
-                }
-
-                //Otherwise, good to fire
-                $this->logger->addDebug("Emit {$eventName} for {$file}");
-                $this->observer->emit($eventName, [$file]);
             }
-
         }
     }
 
