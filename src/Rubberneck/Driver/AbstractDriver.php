@@ -7,6 +7,7 @@
 namespace Calcinai\Rubberneck\Driver;
 
 use Calcinai\Rubberneck\Observer;
+use Monolog\Logger;
 
 abstract class AbstractDriver {
 
@@ -15,7 +16,10 @@ abstract class AbstractDriver {
      */
     protected $observer;
 
-    public function __construct(Observer $observer) {
+    protected $logger;
+
+    public function __construct(Observer $observer, Logger $logger) {
         $this->observer = $observer;
+        $this->logger = $logger;
     }
 }

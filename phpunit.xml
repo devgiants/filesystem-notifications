@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         forceCoversAnnotation="true"
-         beStrictAboutCoversAnnotation="true"
-         beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
-         verbose="true">
-    <testsuite name="Filesytem Notifications Test Suite">
-        <directory suffix="Test.php">tests</directory>
-    </testsuite>
-    <logging>
-        <log type="coverage-html"
-             target="./coverage"
-             lowUpperBound="80"
-             highLowerBound="100"
-             showUncoveredFiles="false"/>
-    </logging>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" bootstrap="vendor/autoload.php" forceCoversAnnotation="true" beStrictAboutCoversAnnotation="true" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" verbose="true">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <report>
+      <html outputDirectory="./coverage" lowUpperBound="80" highLowerBound="100"/>
+    </report>
+  </coverage>
+  <testsuite name="Filesytem Notifications Test Suite">
+    <directory suffix="Test.php">tests</directory>
+  </testsuite>
+  <logging/>
 </phpunit>

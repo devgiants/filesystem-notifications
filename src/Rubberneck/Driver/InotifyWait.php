@@ -8,12 +8,12 @@ namespace Calcinai\Rubberneck\Driver;
 
 use Calcinai\Rubberneck\Observer;
 
-class InotifyWait extends AbstractDriver implements DriverInterface {
+class InotifyWait extends AbstractDriver implements DriverInterface
+{
 
     const IN_CREATE = 'CREATE';
     const IN_MODIFY = 'MODIFY';
     const IN_DELETE = 'DELETE';
-
 
 
     static $EVENT_MAP = [
@@ -22,8 +22,9 @@ class InotifyWait extends AbstractDriver implements DriverInterface {
         self::IN_DELETE => Observer::EVENT_DELETE
     ];
 
-    public function watch($path) {
-
+    public function watch($path)
+    {
+        $this->logger->addDebug("Start watch process for {$path}");
         $subprocessCmd = sprintf('inotifywait -mr %s 2>/dev/null', $path);
 
         $this->observer->getLoop()->addReadStream(popen($subprocessCmd, 'r'), [$this, 'onData']);
@@ -37,35 +38,43 @@ class InotifyWait extends AbstractDriver implements DriverInterface {
      *
      * @param $stream
      */
-    public function onData($stream){        
+    public function onData($stream)
+    {
         $eventLines = fread($stream, 1024);
 
         // Can have multiple events per read (or not enough)
-        foreach(explode("\n", $eventLines) as $event_line){
+        foreach (explode("\n", $eventLines) as $event_line) {
             list($file, $events) = sscanf($event_line, '%s %s');
+            $events = explode(',', $events);
 
-            foreach(explode(',', $events) as $event) {
+            $this->logger->addDebug("Data incoming on {$file}", $events);
+
+            foreach ($events as $event) {
 
                 //If we don't know about that event, continue
-                if(!isset(static::$EVENT_MAP[$event])){
+                if (! isset(static::$EVENT_MAP[$event])) {
+                    $this->logger->addDebug("{$event} is unkown. Abort");
                     continue;
                 }
 
-                $o_event = static::$EVENT_MAP[$event];
+                $eventName = static::$EVENT_MAP[$event];
 
                 //If not subscribed, continue
-                if(!in_array($o_event, $this->observer->getSubscribedEvents())){
+                if (! in_array($eventName, $this->observer->getSubscribedEvents())) {
+                    $this->logger->addDebug("{$event} is unfollowed. Abort");
                     continue;
                 }
 
                 //Otherwise, good to fire
-                $this->observer->emit($o_event, [$file]);
+                $this->logger->addDebug("Emit {$eventName} for {$file}");
+                $this->observer->emit($eventName, [$file]);
             }
 
         }
     }
 
-    public static function hasDependencies() {
+    public static function hasDependencies()
+    {
         return `command -v inotifywait` !== null;
     }
 }
