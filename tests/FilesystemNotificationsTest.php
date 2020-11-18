@@ -6,8 +6,9 @@ use PHPUnit\Framework\TestCase;
 use React\EventLoop\Factory;
 use Calcinai\Rubberneck\Observer;
 use React\EventLoop\LoopInterface;
+use Calcinai\Rubberneck\Driver\Drivers;
 
-class NotificationsTest extends TestCase
+class FilesystemNotificationsTest extends TestCase
 {
     /**
      * @var LoopInterface
@@ -23,10 +24,18 @@ class NotificationsTest extends TestCase
     {
 
         $log = new Logger('filesystem_notifications');
-        $log->pushHandler(new RotatingFileHandler(  "/tmp/filesystem_notifications.log", Logger::DEBUG));
+        $log->pushHandler(
+            new RotatingFileHandler(
+                "/tmp/filesystem_notifications.log",
+                Logger::DEBUG)
+        );
 
         $this->loop     = Factory::create();
-        $this->observer = new Observer($this->loop, $log);
+        $this->observer = new Observer(
+            $this->loop,
+            $log,
+            Drivers::getList()['FILESYSTEM']
+        );
 
         parent::setUp();
     }

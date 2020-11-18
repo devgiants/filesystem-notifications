@@ -24,7 +24,6 @@ class InotifyWait extends AbstractDriver implements DriverInterface
 
     public function watch($path)
     {
-        $this->logger->addDebug("Start watch process for {$path}");
         $subprocessCmd = sprintf('inotifywait -mr %s 2>/dev/null', $path);
 
         $this->observer->getLoop()->addReadStream(popen($subprocessCmd, 'r'), [$this, 'onData']);

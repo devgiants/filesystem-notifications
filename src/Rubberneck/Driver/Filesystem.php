@@ -69,7 +69,7 @@ class Filesystem extends AbstractDriver implements DriverInterface
         exec(sprintf('find %s', $this->file_pattern), $files);
 
         $fileInfo = [];
-        if(is_array($files)) {
+        if(is_array($files) && !empty($files)) {
             foreach ($files as $file) {
                 $fileInfo[$file] = filemtime($file);
             }

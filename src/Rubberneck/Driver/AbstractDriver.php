@@ -16,6 +16,9 @@ abstract class AbstractDriver {
      */
     protected $observer;
 
+    /**
+     * @var Logger $logger
+     */
     protected $logger;
 
     public function __construct(Observer $observer, Logger $logger) {

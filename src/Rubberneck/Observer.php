@@ -7,12 +7,13 @@
 
 namespace Calcinai\Rubberneck;
 
+use Calcinai\Rubberneck\Driver\Drivers;
+use Calcinai\Rubberneck\Exception\DriverDoesNotExistException;
+use Calcinai\Rubberneck\Exception\DriverNotAvailableException;
 use Evenement\EventEmitterTrait;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
-use Calcinai\Rubberneck\Driver;
-use Calcinai\Logger\FilesystemNotificationsLogger;
+use Calcinai\Rubberneck\Driver\DriverInterface;
 
 class Observer {
 
@@ -33,19 +34,9 @@ class Observer {
     private $driver;
 
     /**
-     * @var Logger
+     * @var Logger $logger
      */
     protected $logger;
-
-    /**
-     * List of available drivers in order of preference
-     *
-     * @var Driver\DriverInterface[]
-     */
-    static $drivers = [
-        Driver\InotifyWait::class,
-        Driver\Filesystem::class
-    ];
 
     /**
      * Observer constructor.
@@ -54,16 +45,25 @@ class Observer {
      *
      * @throws \Exception
      */
-    public function __construct(LoopInterface $loop, Logger $logger) {
+    public function __construct(LoopInterface $loop, Logger $logger, ?string $driverClass = null) {
 
         $this->loop = $loop;
         $this->logger = $logger;
-        $driverClass = $this->getBestDriver();
+        if($driverClass !== null) {
+            if(!in_array($driverClass, Drivers::getList())) {
+                $this->logger->addDebug("Driver provided does not exist : {$driverClass}");
+                throw new DriverDoesNotExistException("Driver provided does not exist : {$driverClass}");
+            }
+        } else {
+            $driverClass = $this->getBestDriver();
+        }
+        $this->logger->addDebug("Driver selected : {$driverClass}");
         $this->driver = new $driverClass($this, $logger);
     }
 
 
     public function watch($path) {
+        $this->logger->addDebug("Start watch process for {$path}");
         $this->driver->watch($path);
     }
 
@@ -80,16 +80,15 @@ class Observer {
 
     public function getBestDriver(){
 
-        foreach(self::$drivers as $driver){
+        foreach(Drivers::getList() as $driver){
             if($driver::hasDependencies()){
-                $this->logger->addDebug("Driver selected : {$driver}");
                 return $driver;
             }
         }
 
         $this->logger->addError("No drivers available");
         // Should never happen since the file poll can always work.
-        throw new \Exception('No drivers available');
+        throw new DriverNotAvailableException('No drivers available');
     }
 
 
