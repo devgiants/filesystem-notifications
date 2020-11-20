@@ -40,14 +40,6 @@ class FilesystemNotificationsTest extends TestCase
         parent::setUp();
     }
 
-    /**
-     * @covers Calcinai\Rubberneck\Driver\Filesystem
-     * @covers Calcinai\Rubberneck\Observer
-     * @covers Calcinai\Rubberneck\Driver\AbstractDriver
-     * @covers Calcinai\Rubberneck\Driver\InotifyWait
-     * @covers Calcinai\Rubberneck\Driver\DriverInterface
-     *
-     */
     public function testEvents()
     {
         
@@ -80,7 +72,7 @@ class FilesystemNotificationsTest extends TestCase
         });
 
         $this->observer->onDelete(function ($file_name) {
-            $this->assertFileDoesNotExist($file_name);
+            $this->assertFileNotExists($file_name);
         });
 
 
@@ -94,8 +86,6 @@ class FilesystemNotificationsTest extends TestCase
         if(file_exists('/tmp/creation_test.txt')) {
             unlink('/tmp/creation_test.txt');
         }
-        unset($this->loop);
-        unset($this->observer);
         parent::tearDown();
     }
 }

@@ -45,14 +45,7 @@ class INotifyWaitNotificationsTest extends TestCase
         parent::setUp();
     }
 
-    /**
-     * @covers Calcinai\Rubberneck\Driver\Filesystem
-     * @covers Calcinai\Rubberneck\Observer
-     * @covers Calcinai\Rubberneck\Driver\AbstractDriver
-     * @covers Calcinai\Rubberneck\Driver\InotifyWait
-     * @covers Calcinai\Rubberneck\Driver\Drivers
-     *
-     */
+
     public function testEvents()
     {
 
@@ -84,7 +77,7 @@ class INotifyWaitNotificationsTest extends TestCase
         });
 
         $this->observer->onDelete(function ($fileName) {
-            $this->assertFileDoesNotExist(static::DATA_FOLDER . $fileName);
+            $this->assertFileNotExists(static::DATA_FOLDER . $fileName);
         });
 
 
@@ -96,8 +89,6 @@ class INotifyWaitNotificationsTest extends TestCase
     public function tearDown(): void
     {
         exec(sprintf('rm -rf %s', static::DATA_FOLDER));
-        unset($this->loop);
-        unset($this->observer);
         parent::tearDown();
     }
 }
